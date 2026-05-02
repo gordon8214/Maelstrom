@@ -77,6 +77,8 @@
 		AA928E512EDB9D830005200A /* Mac_Sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA928E4F2EDB9D830005200A /* Mac_Sound.cpp */; };
 		AA929E852EDBA1900005200A /* Docs in Resources */ = {isa = PBXBuildFile; fileRef = AA929E842EDBA1900005200A /* Docs */; };
 		AA929E872EDBA3B80005200A /* Data in Resources */ = {isa = PBXBuildFile; fileRef = AA929E862EDBA3B80005200A /* Data */; };
+		F30F70CC2FA5DC9A00E38CAD /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F30F70CB2FA5DC9A00E38CAD /* README.md */; };
+		F30F70CD2FA5DC9A00E38CAD /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = F30F70CA2FA5DC9A00E38CAD /* COPYING */; };
 		F3281F432F66693200107D76 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F3281F422F66693200107D76 /* Assets.xcassets */; };
 		F384D6AC2F8646D400DC6EA7 /* mods in Resources */ = {isa = PBXBuildFile; fileRef = F384D6AB2F8646D400DC6EA7 /* mods */; };
 		F384D6AF2F8646FE00DC6EA7 /* mods.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F384D6AE2F8646FE00DC6EA7 /* mods.cpp */; };
@@ -248,6 +250,8 @@
 		AA928E4F2EDB9D830005200A /* Mac_Sound.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Mac_Sound.cpp; sourceTree = "<group>"; };
 		AA929E842EDBA1900005200A /* Docs */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Docs; path = ../Docs; sourceTree = "<group>"; };
 		AA929E862EDBA3B80005200A /* Data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Data; path = ../Data; sourceTree = "<group>"; };
+		F30F70CA2FA5DC9A00E38CAD /* COPYING */ = {isa = PBXFileReference; lastKnownFileType = text; name = COPYING; path = ../COPYING; sourceTree = SOURCE_ROOT; };
+		F30F70CB2FA5DC9A00E38CAD /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = SOURCE_ROOT; };
 		F3281F422F66693200107D76 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F384D6AB2F8646D400DC6EA7 /* mods */ = {isa = PBXFileReference; lastKnownFileType = folder; name = mods; path = ../mods; sourceTree = "<group>"; };
 		F384D6AD2F8646FE00DC6EA7 /* mods.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mods.h; sourceTree = "<group>"; };
@@ -302,6 +306,8 @@
 		AA9284AA2EDB8BB30005200A = {
 			isa = PBXGroup;
 			children = (
+				F30F70CA2FA5DC9A00E38CAD /* COPYING */,
+				F30F70CB2FA5DC9A00E38CAD /* README.md */,
 				F3B28F792F76DADC007DABD6 /* Maelstrom-Info.plist */,
 				AA9284C72EDB8CEE0005200A /* SDL.xcodeproj */,
 				AA9285942EDB9A3D0005200A /* SDL_net.xcodeproj */,
@@ -635,10 +641,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F384D6AC2F8646D400DC6EA7 /* mods in Resources */,
+				F30F70CC2FA5DC9A00E38CAD /* README.md in Resources */,
+				F30F70CD2FA5DC9A00E38CAD /* COPYING in Resources */,
 				AA929E872EDBA3B80005200A /* Data in Resources */,
-				F3281F432F66693200107D76 /* Assets.xcassets in Resources */,
 				AA929E852EDBA1900005200A /* Docs in Resources */,
+				F384D6AC2F8646D400DC6EA7 /* mods in Resources */,
+				F3281F432F66693200107D76 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
