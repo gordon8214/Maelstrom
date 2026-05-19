@@ -87,7 +87,9 @@ void LoadControls(void)
 
 void SaveControls(void)
 {
-	prefs->Save();
+	if (prefs) {
+		prefs->Save();
+	}
 }
 
 bool
