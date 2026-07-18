@@ -72,6 +72,9 @@ GameInfo::SetHost(Uint8 wave, Uint8 lives, Uint8 turbo, bool deathmatch, bool ch
 	if (gControlBrakes) {
 		this->gameMode |= GAME_MODE_CONTROL_BRAKES;
 	}
+	if (prefs->GetBool(PREFERENCES_AUTOFIRE)) {
+		this->gameMode |= GAME_MODE_AUTOFIRE;
+	}
 
 	// We are the host node
 	assert(HOST_NODE == 0);

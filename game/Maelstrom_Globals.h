@@ -52,6 +52,7 @@
 #define PREFERENCES_KIDMODE "Cheat.KidMode"
 #define PREFERENCES_CONTINUES "Cheat.Continues"
 #define PREFERENCES_MOD_FILE "ModFile"
+#define PREFERENCES_AUTOFIRE "Gameplay.Autofire"
 
 // The restart event
 #define SDL_EVENT_RESTART_INITIALIZATION	(SDL_EVENT_USER + 0)
@@ -172,6 +173,7 @@ extern int	gNumSprites;
 #define PANEL_ABOUT	"about_story"
 #define DIALOG_LOBBY	"lobby"
 #define DIALOG_CONTROLS	"controls"
+#define DIALOG_OPTIONS	"options"
 #define DIALOG_ZAP	"zap"
 #define DIALOG_DAWN	"dawn"
 #define DIALOG_CHEAT	"cheat"

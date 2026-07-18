@@ -197,6 +197,7 @@ private:
 	int WasThrustingOrManualBraking;
 	int Shooting;
 	int WasShooting;
+	int AutoFireTimer;
 	int Rotating;
 	unsigned char special;
 	int Playing;
@@ -220,6 +221,8 @@ private:
 
 	void UpdateCamera();
 
+	/* Fire a shot (or a spread, with TRIPLE_FIRE) and play the sound */
+	void FireShots();
 	/* Create a new shot */
 	int MakeShot(int offset);
 	/* Rubout a flying shot */

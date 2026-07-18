@@ -48,6 +48,7 @@ enum GAME_MODE {
 	GAME_MODE_CONTROL_BRAKES = 0x02,
 	GAME_MODE_DEATHMATCH     = 0x04,
 	GAME_MODE_CHEAT          = 0x08,
+	GAME_MODE_AUTOFIRE       = 0x10,
 };
 
 #define IS_LOCAL_CONTROL(X)	(X & CONTROL_LOCAL)
@@ -218,6 +219,9 @@ public:
 	}
 	bool ControlBrakes() const {
 		return (gameMode & GAME_MODE_CONTROL_BRAKES) != 0;
+	}
+	bool AutoFire() const {
+		return (gameMode & GAME_MODE_AUTOFIRE) != 0;
 	}
 
 	void SetNodeState(int index, Uint8 state);

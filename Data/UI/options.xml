@@ -1,0 +1,16 @@
+<Dialog>
+	<Size w="424" h="116"/>
+	<Elements>
+		<DialogLabel name="title" text="Options">
+			<Anchor anchorFrom="TOP" anchorTo="TOP" y="14"/>
+		</DialogLabel>
+
+		<DialogCheckbox name="autofire" bindValue="Gameplay.Autofire" text="Autofire (hold the fire key to fire continuously)">
+			<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="24" y="48"/>
+		</DialogCheckbox>
+
+		<DialogButton text="OK" default="true" id="1">
+			<Anchor anchorFrom="BOTTOM" anchorTo="BOTTOM" y="-14"/>
+		</DialogButton>
+	</Elements>
+</Dialog>

@@ -161,6 +161,7 @@ Player::NewWave(void)
 	ThrustBlit = gThrust1;
 	Shooting = 0;
 	WasShooting = 0;
+	AutoFireTimer = 0;
 	Rotating = 0;
 	phase = 0;
 	OBJ_LOOP(i, numshots) {
@@ -205,6 +206,7 @@ Player::NewShip(bool died)
 	WasThrustingOrManualBraking = 0;
 	Shooting = 0;
 	WasShooting = 0;
+	AutoFireTimer = 0;
 	Rotating = 0;
 	phase = 0;
 	phasetime = NO_PHASE_CHANGE;
@@ -487,16 +489,13 @@ printf("\n");
 		if ( Shooting ) {
 			if ( ! WasShooting || (special&MACHINE_GUNS) ) {
 				WasShooting = 1;
-
-				/* Make a single bullet */
-				MakeShot(0);
-				sound->PlaySound(gShotSound, 2);
-
-				if ( special & TRIPLE_FIRE ) {
-					/* Followed by two more.. */
-					MakeShot(1);
-					MakeShot(-1);
-				}
+				AutoFireTimer = AUTOFIRE_DELAY;
+				FireShots();
+			} else if ( gGameInfo.AutoFire() && (--AutoFireTimer <= 0) ) {
+				/* Autofire keeps firing at a steady cadence
+				   while the fire key is held down. */
+				AutoFireTimer = AUTOFIRE_DELAY;
+				FireShots();
 			}
 		} else
 			WasShooting = 0;
@@ -863,6 +862,20 @@ Player::SetSpawnPosition()
 }
 
 /* Private functions... */
+
+void
+Player::FireShots()
+{
+	/* Make a single bullet */
+	MakeShot(0);
+	sound->PlaySound(gShotSound, 2);
+
+	if ( special & TRIPLE_FIRE ) {
+		/* Followed by two more.. */
+		MakeShot(1);
+		MakeShot(-1);
+	}
+}
 
 int
 Player::MakeShot(int offset)

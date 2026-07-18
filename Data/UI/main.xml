@@ -188,7 +188,7 @@
 					<Anchor anchorFrom="BOTTOMLEFT" anchorTo="TOPRIGHT" anchor="PlayButton" x="3" y="21"/>
 				</Label>
 				<Button condition="NETWORK_AVAILABLE" name="MultiplayerButton" template="MenuButton" hotkey="M" text="M" action="multiplayer" clickSound="114">
-					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" anchor="PlayButton" y="34"/>
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" anchor="PlayButton" y="30"/>
 				</Button>
 				<Label condition="NETWORK_AVAILABLE" template="SmallYellow" text=" Start a multiplayer game">
 					<Anchor anchorFrom="BOTTOMLEFT" anchorTo="TOPRIGHT" anchor="MultiplayerButton" x="3" y="21"/>
@@ -200,31 +200,37 @@
 					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" anchor="PlayButton"/>
 				</Area>
 				<Button name="ControlsButton" template="MenuButton" hotkey="C" text="C" action="show_controls" clickSound="119">
-					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" anchor="ControlsButtonAnchor" y="34"/>
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" anchor="ControlsButtonAnchor" y="30"/>
 				</Button>
 				<Label template="SmallYellow" text=" Configure the game controls">
 					<Anchor anchorFrom="BOTTOMLEFT" anchorTo="TOPRIGHT" anchor="ControlsButton" x="3" y="21"/>
 				</Label>
 				<Button name="ZapButton" template="MenuButton" hotkey="Z" text="Z" action="show_zap" clickSound="107">
-					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" anchor="ControlsButton" y="34"/>
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" anchor="ControlsButton" y="30"/>
 				</Button>
 				<Label template="SmallYellow" text=" Zap the high scores">
 					<Anchor anchorFrom="BOTTOMLEFT" anchorTo="TOPRIGHT" anchor="ZapButton" x="3" y="21"/>
 				</Label>
 				<Button name="AboutButton" template="MenuButton" hotkey="A" text="A" action="show_about_story" clickSound="122">
-					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" anchor="ZapButton" y="34"/>
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" anchor="ZapButton" y="30"/>
 				</Button>
 				<Label template="SmallYellow" text=" About Maelstrom...">
 					<Anchor anchorFrom="BOTTOMLEFT" anchorTo="TOPRIGHT" anchor="AboutButton" x="3" y="21"/>
 				</Label>
+				<Button name="OptionsButton" template="MenuButton" hotkey="O" text="O" action="show_options" clickSound="119">
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" anchor="AboutButton" y="30"/>
+				</Button>
+				<Label template="SmallYellow" text=" Game options...">
+					<Anchor anchorFrom="BOTTOMLEFT" anchorTo="TOPRIGHT" anchor="OptionsButton" x="3" y="21"/>
+				</Label>
 				<Button condition="QUIT_AVAILABLE" name="QuitButton" template="MenuButton" hotkey="Q" hotkey2="Escape" text="Q" action="quit" clickSound="106">
-					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" anchor="PlayButton" y="170"/>
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" anchor="PlayButton" y="180"/>
 				</Button>
 				<Label condition="QUIT_AVAILABLE" template="SmallYellow" text=" Quit Maelstrom">
 					<Anchor anchorFrom="BOTTOMLEFT" anchorTo="TOPRIGHT" anchor="QuitButton" x="3" y="21"/>
 				</Label>
 				<Button name="VolumeDownButton" template="MenuButton" hotkey="0" text="0" action="volume_down">
-					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" anchor="PlayButton" y="204"/>
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" anchor="PlayButton" y="210"/>
 				</Button>
 				<Label template="SmallYellow" text="-">
 					<Anchor anchorFrom="BOTTOMLEFT" anchorTo="TOPRIGHT" anchor="VolumeDownButton" x="3" y="21"/>
@@ -452,6 +458,9 @@
 				</Button>
 				<Button name="AboutButton" template="LargeMenuButton" text="About Maelstrom..." hotkey="A" action="show_about_story" clickSound="122">
 					<Anchor anchorFrom="TOP" anchorTo="BOTTOM" anchor="ZapButton" y="4"/>
+				</Button>
+				<Button name="OptionsButton" template="LargeMenuButton" text="Game options..." hotkey="O" action="show_options" clickSound="119">
+					<Anchor anchorFrom="TOP" anchorTo="BOTTOM" anchor="AboutButton" y="4"/>
 				</Button>
 
 				<!-- Hidden action buttons -->
