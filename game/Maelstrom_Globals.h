@@ -53,6 +53,7 @@
 #define PREFERENCES_CONTINUES "Cheat.Continues"
 #define PREFERENCES_MOD_FILE "ModFile"
 #define PREFERENCES_AUTOFIRE "Gameplay.Autofire"
+#define PREFERENCES_PRIZE_FREQUENCY "Gameplay.PrizeFrequency"
 
 // The restart event
 #define SDL_EVENT_RESTART_INITIALIZATION	(SDL_EVENT_USER + 0)

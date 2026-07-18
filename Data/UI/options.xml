@@ -1,13 +1,52 @@
 <Dialog>
-	<Size w="424" h="116"/>
+	<Size w="496" h="208"/>
 	<Elements>
 		<DialogLabel name="title" text="Options">
 			<Anchor anchorFrom="TOP" anchorTo="TOP" y="14"/>
 		</DialogLabel>
 
 		<DialogCheckbox name="autofire" bindValue="Gameplay.Autofire" text="Autofire (hold the fire key to fire continuously)">
-			<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="24" y="48"/>
+			<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="24" y="44"/>
 		</DialogCheckbox>
+
+		<DialogLabel name="freqLabel" text="Powerup frequency:">
+			<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="24" y="80"/>
+		</DialogLabel>
+
+		<DialogRadioGroup name="prizeFreq" bindValue="Gameplay.PrizeFrequency">
+			<Elements>
+				<DialogRadioButton name="p100" text="100%" checked="true" id="100">
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="34" y="106"/>
+				</DialogRadioButton>
+				<DialogRadioButton name="p200" text="200%" id="200">
+					<Anchor anchorFrom="LEFT" anchorTo="RIGHT" anchor="p100" x="16"/>
+				</DialogRadioButton>
+				<DialogRadioButton name="p300" text="300%" id="300">
+					<Anchor anchorFrom="LEFT" anchorTo="RIGHT" anchor="p200" x="16"/>
+				</DialogRadioButton>
+				<DialogRadioButton name="p400" text="400%" id="400">
+					<Anchor anchorFrom="LEFT" anchorTo="RIGHT" anchor="p300" x="16"/>
+				</DialogRadioButton>
+				<DialogRadioButton name="p500" text="500%" id="500">
+					<Anchor anchorFrom="LEFT" anchorTo="RIGHT" anchor="p400" x="16"/>
+				</DialogRadioButton>
+				<DialogRadioButton name="p600" text="600%" id="600">
+					<Anchor anchorFrom="TOPLEFT" anchorTo="BOTTOMLEFT" anchor="p100" y="10"/>
+				</DialogRadioButton>
+				<DialogRadioButton name="p700" text="700%" id="700">
+					<Anchor anchorFrom="TOPLEFT" anchorTo="BOTTOMLEFT" anchor="p200" y="10"/>
+				</DialogRadioButton>
+				<DialogRadioButton name="p800" text="800%" id="800">
+					<Anchor anchorFrom="TOPLEFT" anchorTo="BOTTOMLEFT" anchor="p300" y="10"/>
+				</DialogRadioButton>
+				<DialogRadioButton name="p900" text="900%" id="900">
+					<Anchor anchorFrom="TOPLEFT" anchorTo="BOTTOMLEFT" anchor="p400" y="10"/>
+				</DialogRadioButton>
+				<DialogRadioButton name="p1000" text="1000%" id="1000">
+					<Anchor anchorFrom="TOPLEFT" anchorTo="BOTTOMLEFT" anchor="p500" y="10"/>
+				</DialogRadioButton>
+			</Elements>
+		</DialogRadioGroup>
 
 		<DialogButton text="OK" default="true" id="1">
 			<Anchor anchorFrom="BOTTOM" anchorTo="BOTTOM" y="-14"/>

@@ -1108,8 +1108,24 @@ GamePanelDelegate::DoHousekeeping()
 		MakeMultiplier();
 
 	/* -- Maybe throw a prize(!) up on the screen */
-	if (gPrizeShown && (--gPrizeShown == 0) )
-		MakePrize();
+	if (gPrizeShown && (--gPrizeShown == 0) ) {
+		/* Skip the spawn if the screen is nearly full so the higher
+		   frequencies never run past MAX_SPRITES (MakePrize can drop up
+		   to 10 at once on a "blue moon"). */
+		if (gGameInfo.prizeFrequency <= 100 ||
+		    gNumSprites < (MAX_SPRITES - 16)) {
+			MakePrize();
+		}
+
+		/* Above 100%, re-arm so another prize appears shortly -- powerups
+		   show up proportionally more often (higher % = longer streams).
+		   Gated on prizeFrequency > 100 so the default consumes no random
+		   numbers and stays identical to the original game. */
+		if (gGameInfo.prizeFrequency > 100 &&
+		    FastRandom(gGameInfo.prizeFrequency) >= 100) {
+			gPrizeShown = ((FastRandom(12) + 1) * (30 / FRAME_DELAY));
+		}
+	}
 
 	/* -- Maybe throw a bonus up on the screen */
 	if (gBonusShown && (--gBonusShown == 0) )
@@ -1511,6 +1527,15 @@ GamePanelDelegate::StartNextWave()
 		gPrizeShown = ((FastRandom(30) * 60)/FRAME_DELAY);
 	else
 		gPrizeShown = 0;
+
+	if (gGameInfo.prizeFrequency > 100) {
+		/* Boosted powerup frequency: schedule a prize soon every wave so
+		   powerups reliably appear even when a wave is cleared quickly;
+		   the re-arm in DoHousekeeping then adds more, scaled by the
+		   multiplier.  This runs only above 100%, so the default game is
+		   byte-for-byte identical for replays and netplay. */
+		gPrizeShown = ((FastRandom(12) + 1) * (30 / FRAME_DELAY));
+	}
 
 	/* See about the Bonus */
 	if ( FastRandom(2) )

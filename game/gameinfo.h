@@ -254,6 +254,7 @@ public:
 	Uint8 lives;
 	Uint8 turbo;
 	Uint8 gameMode;
+	Uint16 prizeFrequency;
 
 	Uint32 replayVersion;
 	Uint32 spriteCRC;

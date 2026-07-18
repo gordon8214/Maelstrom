@@ -42,6 +42,7 @@ GameInfo::Reset()
 	lives = 0;
 	turbo = 0;
 	gameMode = 0;
+	prizeFrequency = 100;
 	numNodes = 0;
 	SDL_zero(nodes);
 	SDL_zero(players);
@@ -75,6 +76,11 @@ GameInfo::SetHost(Uint8 wave, Uint8 lives, Uint8 turbo, bool deathmatch, bool ch
 	if (prefs->GetBool(PREFERENCES_AUTOFIRE)) {
 		this->gameMode |= GAME_MODE_AUTOFIRE;
 	}
+
+	int freq = prefs->GetNumber(PREFERENCES_PRIZE_FREQUENCY, 100);
+	if (freq < 100) freq = 100;
+	if (freq > 1000) freq = 1000;
+	this->prizeFrequency = (Uint16)freq;
 
 	// We are the host node
 	assert(HOST_NODE == 0);
@@ -159,6 +165,7 @@ GameInfo::CopyFrom(const GameInfo &rhs)
 	lives = rhs.lives;
 	turbo = rhs.turbo;
 	gameMode = rhs.gameMode;
+	prizeFrequency = rhs.prizeFrequency;
 	replayVersion = rhs.replayVersion;
 	spriteCRC = rhs.spriteCRC;
 
@@ -280,6 +287,11 @@ GameInfo::ReadFromPacket(DynamicPacket &packet)
 		}
 	}
 
+	if (!packet.Read(prizeFrequency)) {
+		// Older version
+		prizeFrequency = 100;
+	}
+
 	return true;
 }
 
@@ -313,6 +325,8 @@ GameInfo::WriteToPacket(DynamicPacket &packet)
 	for (i = 0; i < MAX_PLAYERS; ++i) {
 		packet.Write(players[i].available);
 	}
+
+	packet.Write(prizeFrequency);
 }
 
 void
