@@ -41,6 +41,7 @@ xcodebuild \
   -derivedDataPath build/xcode-install \
   MACOSX_DEPLOYMENT_TARGET=12.0 \
   CODE_SIGN_IDENTITY="-" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=YES \
+  ENABLE_HARDENED_RUNTIME=NO \
   build
 ```
 
@@ -59,7 +60,14 @@ Notes:
   the override lives here. Raise the value if a future Xcode drops 12.0.
 - Ad-hoc signing (`-`) also re-signs the embedded `SDL3.framework` / `SDL3_net.framework`.
   If you'd rather sign with a real Developer ID, drop the three `CODE_SIGN*` overrides and
-  let Xcode's automatic signing run.
+  the `ENABLE_HARDENED_RUNTIME=NO` override and let Xcode's automatic signing run.
+- `ENABLE_HARDENED_RUNTIME=NO` is **required with ad-hoc signing**: the project enables the
+  hardened runtime, and a hardened-runtime process only loads frameworks signed by Apple or
+  by *its own team*. Ad-hoc signatures have no team identity, so dyld refuses the embedded
+  SDL frameworks and the app dies at launch with "Library not loaded … different Team IDs"
+  (this happened; see the 2026-07-18 crash). Hardened runtime only matters for
+  notarization, which a locally installed build doesn't need. Keep it enabled only if
+  signing with a real team identity.
 
 ## Step 3 — Locate the product
 
