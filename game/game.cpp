@@ -483,7 +483,7 @@ GamePanelDelegate::OnTick()
 		if ( ! gPlayers[j]->Alive() )
 			continue;
 
-		if (gGameInfo.IsKidMode()) {
+		if (gGameInfo.IsKidMode() || gGameInfo.AutoShieldMode()) {
 			bool enableShield = false;
 			OBJ_LOOP(i, gNumSprites) {
 				if (gSprites[i]->IsDangerous() && gSprites[i]->Collide(gPlayers[j], false)) {

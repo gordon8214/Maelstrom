@@ -233,6 +233,10 @@ Player::NewShip(bool died)
 	if (gGameInfo.IsKidMode()) {
 		special |= AIR_BRAKES;
 	}
+
+	// Apply the player's chosen starting powerup (re-granted each life).
+	// Mask to known flags so a corrupt packet/replay can't inject stray bits.
+	special |= (gGameInfo.startPowerup & ALL_SPECIALS);
 	return(Lives);
 }
 

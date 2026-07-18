@@ -29,6 +29,9 @@
 #define TRIPLE_FIRE	0x04
 #define LONG_RANGE	0x08
 #define LUCKY_IRISH	0x80
+/* Mask of all valid special-feature flags; the starting-powerup radio group
+   ids in Data/UI/options.xml mirror these values */
+#define ALL_SPECIALS	(MACHINE_GUNS|AIR_BRAKES|TRIPLE_FIRE|LONG_RANGE|LUCKY_IRISH)
 
 /* Different shield modes */
 #define SHIELD_MANUAL	0x01

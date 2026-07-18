@@ -1,22 +1,26 @@
 <Dialog>
-	<Size w="496" h="208"/>
+	<Size w="496" h="320"/>
 	<Elements>
 		<DialogLabel name="title" text="Options">
 			<Anchor anchorFrom="TOP" anchorTo="TOP" y="14"/>
 		</DialogLabel>
 
 		<DialogCheckbox name="autofire" bindValue="Gameplay.Autofire" text="Autofire (hold the fire key to fire continuously)">
-			<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="24" y="44"/>
+			<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="24" y="46"/>
+		</DialogCheckbox>
+
+		<DialogCheckbox name="autoshield" bindValue="Gameplay.AutoShield" text="Auto-shield (raise shields automatically near danger)">
+			<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="24" y="74"/>
 		</DialogCheckbox>
 
 		<DialogLabel name="freqLabel" text="Powerup frequency:">
-			<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="24" y="80"/>
+			<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="24" y="106"/>
 		</DialogLabel>
 
 		<DialogRadioGroup name="prizeFreq" bindValue="Gameplay.PrizeFrequency">
 			<Elements>
 				<DialogRadioButton name="p100" text="100%" checked="true" id="100">
-					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="34" y="106"/>
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="34" y="132"/>
 				</DialogRadioButton>
 				<DialogRadioButton name="p200" text="200%" id="200">
 					<Anchor anchorFrom="LEFT" anchorTo="RIGHT" anchor="p100" x="16"/>
@@ -44,6 +48,33 @@
 				</DialogRadioButton>
 				<DialogRadioButton name="p1000" text="1000%" id="1000">
 					<Anchor anchorFrom="TOPLEFT" anchorTo="BOTTOMLEFT" anchor="p500" y="10"/>
+				</DialogRadioButton>
+			</Elements>
+		</DialogRadioGroup>
+
+		<DialogLabel name="powerupLabel" text="Starting powerup:">
+			<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="24" y="194"/>
+		</DialogLabel>
+
+		<DialogRadioGroup name="startPowerup" bindValue="Gameplay.StartPowerup">
+			<Elements>
+				<DialogRadioButton name="pwNone" text="None" checked="true" id="0">
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="34" y="220"/>
+				</DialogRadioButton>
+				<DialogRadioButton name="pwMachine" text="Machine Guns" id="1">
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="190" y="220"/>
+				</DialogRadioButton>
+				<DialogRadioButton name="pwBrakes" text="Air Brakes" id="2">
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="346" y="220"/>
+				</DialogRadioButton>
+				<DialogRadioButton name="pwTriple" text="Triple Fire" id="4">
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="34" y="250"/>
+				</DialogRadioButton>
+				<DialogRadioButton name="pwLong" text="Long Range" id="8">
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="190" y="250"/>
+				</DialogRadioButton>
+				<DialogRadioButton name="pwLucky" text="Lucky Irish" id="128">
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="346" y="250"/>
 				</DialogRadioButton>
 			</Elements>
 		</DialogRadioGroup>

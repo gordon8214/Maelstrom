@@ -54,6 +54,8 @@
 #define PREFERENCES_MOD_FILE "ModFile"
 #define PREFERENCES_AUTOFIRE "Gameplay.Autofire"
 #define PREFERENCES_PRIZE_FREQUENCY "Gameplay.PrizeFrequency"
+#define PREFERENCES_AUTOSHIELD "Gameplay.AutoShield"
+#define PREFERENCES_START_POWERUP "Gameplay.StartPowerup"
 
 // The restart event
 #define SDL_EVENT_RESTART_INITIALIZATION	(SDL_EVENT_USER + 0)

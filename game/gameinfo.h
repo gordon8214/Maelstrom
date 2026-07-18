@@ -49,6 +49,7 @@ enum GAME_MODE {
 	GAME_MODE_DEATHMATCH     = 0x04,
 	GAME_MODE_CHEAT          = 0x08,
 	GAME_MODE_AUTOFIRE       = 0x10,
+	GAME_MODE_AUTOSHIELD     = 0x20,
 };
 
 #define IS_LOCAL_CONTROL(X)	(X & CONTROL_LOCAL)
@@ -223,6 +224,9 @@ public:
 	bool AutoFire() const {
 		return (gameMode & GAME_MODE_AUTOFIRE) != 0;
 	}
+	bool AutoShieldMode() const {
+		return (gameMode & GAME_MODE_AUTOSHIELD) != 0;
+	}
 
 	void SetNodeState(int index, Uint8 state);
 	Uint8 GetNodeState(int index) const;
@@ -255,6 +259,7 @@ public:
 	Uint8 turbo;
 	Uint8 gameMode;
 	Uint16 prizeFrequency;
+	Uint8 startPowerup;
 
 	Uint32 replayVersion;
 	Uint32 spriteCRC;

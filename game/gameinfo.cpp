@@ -25,6 +25,7 @@
 #include "../screenlib/UIElementRadio.h"
 
 #include "gameinfo.h"
+#include "player.h"
 
 
 GameInfo::GameInfo()
@@ -43,6 +44,7 @@ GameInfo::Reset()
 	turbo = 0;
 	gameMode = 0;
 	prizeFrequency = 100;
+	startPowerup = 0;
 	numNodes = 0;
 	SDL_zero(nodes);
 	SDL_zero(players);
@@ -76,11 +78,21 @@ GameInfo::SetHost(Uint8 wave, Uint8 lives, Uint8 turbo, bool deathmatch, bool ch
 	if (prefs->GetBool(PREFERENCES_AUTOFIRE)) {
 		this->gameMode |= GAME_MODE_AUTOFIRE;
 	}
+	if (prefs->GetBool(PREFERENCES_AUTOSHIELD)) {
+		this->gameMode |= GAME_MODE_AUTOSHIELD;
+	}
 
 	int freq = prefs->GetNumber(PREFERENCES_PRIZE_FREQUENCY, 100);
 	if (freq < 100) freq = 100;
 	if (freq > 1000) freq = 1000;
 	this->prizeFrequency = (Uint16)freq;
+
+	int power = prefs->GetNumber(PREFERENCES_START_POWERUP, 0);
+	if (power != MACHINE_GUNS && power != AIR_BRAKES && power != TRIPLE_FIRE &&
+	    power != LONG_RANGE && power != LUCKY_IRISH) {
+		power = 0;	// None or invalid
+	}
+	this->startPowerup = (Uint8)power;
 
 	// We are the host node
 	assert(HOST_NODE == 0);
@@ -166,6 +178,7 @@ GameInfo::CopyFrom(const GameInfo &rhs)
 	turbo = rhs.turbo;
 	gameMode = rhs.gameMode;
 	prizeFrequency = rhs.prizeFrequency;
+	startPowerup = rhs.startPowerup;
 	replayVersion = rhs.replayVersion;
 	spriteCRC = rhs.spriteCRC;
 
@@ -292,6 +305,11 @@ GameInfo::ReadFromPacket(DynamicPacket &packet)
 		prizeFrequency = 100;
 	}
 
+	if (!packet.Read(startPowerup)) {
+		// Older version
+		startPowerup = 0;
+	}
+
 	return true;
 }
 
@@ -327,6 +345,7 @@ GameInfo::WriteToPacket(DynamicPacket &packet)
 	}
 
 	packet.Write(prizeFrequency);
+	packet.Write(startPowerup);
 }
 
 void
