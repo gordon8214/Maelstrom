@@ -2,3 +2,6 @@
 .DS_Store
 xcuserdata
 *.xcworkspace
+
+# CMake build output
+/build/
