@@ -1739,7 +1739,7 @@ int InterpolateCoordinate(int prev, int cur, int range)
 /* ----------------------------------------------------------------- */
 /* -- Render a sprite on the screen */
 
-void RenderSprite(UITexture *sprite, int x, int y, int w, int h)
+void RenderSprite(UITexture *sprite, int x, int y, int w, int h, float angle)
 {
 	float X = (float)x;
 	float Y = (float)y;
@@ -1748,37 +1748,37 @@ void RenderSprite(UITexture *sprite, int x, int y, int w, int h)
 	GetRenderCoordinatesF(X, Y);
 	W = ((float)w * gScrnRect.w) / GAME_WIDTH;
 	H = ((float)h * gScrnRect.h) / GAME_HEIGHT;
-	screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP);
+	screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP, angle);
 
 	// Render the other sides of the sprite
 	if (X < 0.0f) {
 		X += GAME_WIDTH;
-		screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP);
+		screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP, angle);
 	} else if ((X + W) > GAME_WIDTH) {
 		X -= GAME_WIDTH;
-		screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP);
+		screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP, angle);
 	}
 	if (Y < 0.0f) {
 		Y += GAME_HEIGHT;
-		screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP);
+		screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP, angle);
 
 		if (X < 0.0f) {
 			X += GAME_WIDTH;
-			screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP);
+			screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP, angle);
 		} else if ((X + W) > GAME_WIDTH) {
 			X -= GAME_WIDTH;
-			screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP);
+			screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP, angle);
 		}
 	} else if ((Y + H) > GAME_HEIGHT) {
 		Y -= GAME_HEIGHT;
-		screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP);
+		screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP, angle);
 
 		if (X < 0.0f) {
 			X += GAME_WIDTH;
-			screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP);
+			screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP, angle);
 		} else if ((X + W) > GAME_WIDTH) {
 			X -= GAME_WIDTH;
-			screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP);
+			screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP, angle);
 		}
 	}
 }

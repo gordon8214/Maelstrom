@@ -135,6 +135,6 @@ extern void NewGame(void);
 extern void ContinueGame(void);
 extern void GetRenderCoordinates(int &x, int &y);
 extern int  InterpolateCoordinate(int prev, int cur, int range);
-extern void RenderSprite(UITexture *sprite, int x, int y, int w, int h);
+extern void RenderSprite(UITexture *sprite, int x, int y, int w, int h, float angle = 0.0f);
 
 #endif // _game_h

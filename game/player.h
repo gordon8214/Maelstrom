@@ -206,6 +206,7 @@ private:
 	int WasShooting;
 	int AutoFireTimer;
 	int Rotating;
+	int PrevPhase;
 	unsigned char special;
 	int Playing;
 	int Dead;

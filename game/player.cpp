@@ -55,6 +55,7 @@ Player:: Player(int index) : Object(0, 0, 0, 0, gPlayerShip[index], NO_PHASE_CHA
 	Index = index;
 	Score = 0;
 	CameraX = CameraY = PrevCameraX = PrevCameraY = 0;
+	PrevPhase = 0;
 	for ( i=0; i<MAX_SHOTS; ++i ) {
 		shots[i] = new Shot;
 		shots[i]->damage = 1;
@@ -165,6 +166,7 @@ Player::NewWave(void)
 	AutoFireTimer = 0;
 	Rotating = 0;
 	phase = 0;
+	PrevPhase = 0;
 	OBJ_LOOP(i, numshots) {
 		KillShot(i);
 	}
@@ -212,6 +214,7 @@ Player::NewShip(bool died)
 	AutoFireTimer = 0;
 	Rotating = 0;
 	phase = 0;
+	PrevPhase = 0;
 	phasetime = NO_PHASE_CHANGE;
 	Dead = 0;
 	Exploding = 0;
@@ -400,10 +403,12 @@ Player::ShotHit(Rect *hitRect)
 	return(NULL);
 }
 
-int 
+int
 Player::Move(int Freeze)
 {
 	int i, result;
+
+	PrevPhase = phase;
 
 	/* Move and time out old shots */
 #ifdef SERIOUS_DEBUG
@@ -792,6 +797,26 @@ Player::BlitSprite(void)
 
 	GetRenderPos(&X, &Y);
 
+	/* Interpolate our facing between timesteps.  The ship frames are
+	   a rotation in steps of (360 / numFrames) degrees, so we can draw
+	   the nearest frame turned by the fractional remainder */
+	int frame = phase;
+	float angle = 0.0f;
+	if ( ! Exploding && gSimMoved && gInterpolateMotion ) {
+		int numFrames = myblit->numFrames;
+		int delta = phase - PrevPhase;
+		float facing;
+
+		if ( delta > numFrames/2 )
+			delta -= numFrames;
+		else if ( delta < -numFrames/2 )
+			delta += numFrames;
+		facing = (float)PrevPhase + gRenderAlpha * (float)delta;
+		frame = (int)SDL_lroundf(facing);
+		angle = (facing - (float)frame) * (360.0f / (float)numFrames);
+		frame = (frame + numFrames) % numFrames;
+	}
+
 	/* Draw the shield, if necessary */
 	if ( ! gPaused && (AutoShield || (ShieldOn && (ShieldLevel > 0))) ) {
 		RenderSprite(gShieldBlit->sprite[Sphase], X, Y, SHIELD_SIZE, SHIELD_SIZE);
@@ -799,20 +824,20 @@ Player::BlitSprite(void)
 	/* Draw the thrust, if necessary */
 	if ( ! gPaused && Thrusting && ! NoThrust ) {
 		int thrust_x, thrust_y;
-		thrust_x = X + gThrustOrigins[phase].h;
-		thrust_y = Y + gThrustOrigins[phase].v;
-		RenderSprite(ThrustBlit->sprite[phase], thrust_x, thrust_y, THRUST_SIZE, THRUST_SIZE);
+		thrust_x = X + gThrustOrigins[frame].h;
+		thrust_y = Y + gThrustOrigins[frame].v;
+		RenderSprite(ThrustBlit->sprite[frame], thrust_x, thrust_y, THRUST_SIZE, THRUST_SIZE, angle);
 	}
 
 	/* Draw our ship */
 	if (Ghost) {
-		SDL_SetTextureAlphaMod(myblit->sprite[phase]->Texture(), 0x80);
+		SDL_SetTextureAlphaMod(myblit->sprite[frame]->Texture(), 0x80);
 	}
 
-	Object::BlitSprite();
+	RenderSprite(myblit->sprite[frame], X, Y, xsize, ysize, angle);
 
 	if (Ghost) {
-		SDL_SetTextureAlphaMod(myblit->sprite[phase]->Texture(), 0xFF);
+		SDL_SetTextureAlphaMod(myblit->sprite[frame]->Texture(), 0xFF);
 	}
 }
 void 
