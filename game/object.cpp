@@ -43,6 +43,7 @@ Object::Object(int X, int Y, int Xvec, int Yvec, Blit *blit, int PhaseTime)
 	playground.bottom = (GAME_HEIGHT << SPRITE_PRECISION);
 
 	SetPos(X, Y);
+	SyncRenderPos();
 	xvec = Xvec;
 	yvec = Yvec;
 
@@ -82,9 +83,11 @@ Object::Explode(void)
 
 /* Movement */
 /* This function returns 0, or -1 if the sprite died */
-int 
+int
 Object::Move(int Frozen)		// This is called every timestep.
 {
+	prevx = x;
+	prevy = y;
 	if ( ! Frozen )
 		SetPos(x+xvec, y+yvec);
 
@@ -98,9 +101,19 @@ Object::Move(int Frozen)		// This is called every timestep.
 	return(0);
 }
 void
+Object::GetRenderPos(int *X, int *Y)
+{
+	*X = InterpolateCoordinate(prevx, x, playground.right - playground.left);
+	*Y = InterpolateCoordinate(prevy, y, playground.bottom - playground.top);
+}
+
+void
 Object::BlitSprite(void)
 {
-	RenderSprite(myblit->sprite[phase], x, y, xsize, ysize);
+	int X, Y;
+
+	GetRenderPos(&X, &Y);
+	RenderSprite(myblit->sprite[phase], X, Y, xsize, ysize);
 }
 
 /* Sound functions */

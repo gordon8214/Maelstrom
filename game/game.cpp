@@ -57,6 +57,8 @@ int	gWhenEnemy;
 
 int	gShownContinue;
 
+static void GetRenderCoordinatesF(float &x, float &y);
+
 /* ----------------------------------------------------------------- */
 /* -- Setup the players for a new game */
 
@@ -231,6 +233,7 @@ GamePanelDelegate::OnShow()
 	}
 	gLastStar = STAR_DELAY;
 	gLastDrawn = 0L;
+	gLastTicked = 0L;
 	gNumSprites = 0;
 
 	if ( gGameInfo.IsMultiplayer() ) {
@@ -566,7 +569,12 @@ GamePanelDelegate::OnTick()
 	if ( gFreezeTime )
 		--gFreezeTime;
 
+	/* The simulation stepped, so drawing may interpolate motion */
+	gSimMoved = true;
+
 	DoHousekeeping();
+
+	CheckNewLife(false);
 }
 
 void
@@ -583,7 +591,7 @@ GamePanelDelegate::OnDraw(DRAWLEVEL drawLevel)
 	}
 
 	/* Draw the status frame */
-	DrawStatus(false);
+	DrawStatus();
 
 	StartZoomedDrawing();
 
@@ -624,6 +632,8 @@ GamePanelDelegate::OnDraw(DRAWLEVEL drawLevel)
 	StopZoomedDrawing();
 
 	if (m_state == STATE_START_BONUS) {
+		/* This mutates scores from the draw path; it converges to the
+		   same totals for all players by the end of the bonus screen */
 		DoBonus();
 	}
 }
@@ -818,19 +828,21 @@ GamePanelDelegate::StopZoomedDrawing()
 	SDL_GetRenderOutputSize(renderer, &w, &h);
 
 	int cameraX, cameraY;
-	gPlayers[gDisplayed]->GetCameraPos(&cameraX, &cameraY);
-	GetRenderCoordinates(cameraX, cameraY);
+	gPlayers[gDisplayed]->GetRenderCameraPos(&cameraX, &cameraY);
+	float camX = (float)cameraX;
+	float camY = (float)cameraY;
+	GetRenderCoordinatesF(camX, camY);
 
-	SDL_Rect src;
-	src.w = m_savedClip.w;
-	src.h = m_savedClip.h;
-	src.x = cameraX - src.w / 2;
-	src.y = cameraY - src.h / 2;
+	SDL_FRect src;
+	src.w = (float)m_savedClip.w;
+	src.h = (float)m_savedClip.h;
+	src.x = camX - src.w / 2;
+	src.y = camY - src.h / 2;
 
-	float minu = (float)src.x / m_texture->w;
-	float minv = (float)src.y / m_texture->h;
-	float maxu = (float)(src.x + src.w) / m_texture->w;
-	float maxv = (float)(src.y + src.h) / m_texture->h;
+	float minu = src.x / m_texture->w;
+	float minv = src.y / m_texture->h;
+	float maxu = (src.x + src.w) / m_texture->w;
+	float maxv = (src.y + src.h) / m_texture->h;
 
 	float scale = (float)h / src.h;
 	SDL_FRect dst;
@@ -895,24 +907,63 @@ GamePanelDelegate::StopZoomedDrawing()
 }
 
 /* ----------------------------------------------------------------- */
-/* -- Draw the status display */
+/* -- Check for new lives earned by score.  This mutates game state,
+      so it must be called from the simulation, never while drawing */
 
 void
-GamePanelDelegate::DrawStatus(Bool first)
+GamePanelDelegate::CheckNewLife(Bool first)
 {
 	static int lastScores[MAX_PLAYERS], lastLife[MAX_PLAYERS];
 	int Score;
-	int MultFactor;
 	int i;
-	char numbuf[128];
 
-/* -- Draw the status display */
-
-	if (first && gWave == 1) {
+	/* The first wave of a game may not be 1 (e.g. the cheat dialog) */
+	if (first && gWave == gGameInfo.wave) {
 		OBJ_LOOP(i, MAX_PLAYERS) {
 			lastLife[i] = lastScores[i] = 0;
 		}
 	}
+
+	if (!gGameOn) {
+		return;
+	}
+
+	if (gGameInfo.IsDeathmatch()) {
+		return;
+	}
+
+	OBJ_LOOP(i, MAX_PLAYERS) {
+		if (!gPlayers[i]->IsValid()) {
+			continue;
+		}
+		Score = gPlayers[i]->GetScore();
+
+		if (lastScores[i] == Score)
+			continue;
+
+		/* -- See if they got a new life */
+		lastScores[i] = Score;
+		while ((Score - lastLife[i]) >= NEW_LIFE) {
+			if (!gPlayers[i]->IsGhost()) {
+				gPlayers[i]->IncrLives(1);
+				if ( i == gDisplayed )
+					sound->PlaySound(gNewLife, 5);
+			}
+			lastLife[i] += NEW_LIFE;
+		}
+	}
+}
+
+/* ----------------------------------------------------------------- */
+/* -- Draw the status display */
+
+void
+GamePanelDelegate::DrawStatus()
+{
+	int Score;
+	int MultFactor;
+	int i;
+	char numbuf[128];
 
 	if ( gGameInfo.IsMultiplayer() ) {
 		if (gReplay.IsPlaying() && SDL_HasKeyboard()) {
@@ -1001,22 +1052,6 @@ GamePanelDelegate::DrawStatus(Bool first)
 		if ( i == gDisplayed && m_score ) {
 			SDL_snprintf(numbuf, sizeof(numbuf), "%d", Score);
 			m_score->SetText(numbuf);
-		}
-
-		if (!gGameInfo.IsDeathmatch()) {
-			if (lastScores[i] == Score)
-				continue;
-
-			/* -- See if they got a new life */
-			lastScores[i] = Score;
-			while ((Score - lastLife[i]) >= NEW_LIFE) {
-				if (!gPlayers[i]->IsGhost()) {
-					gPlayers[i]->IncrLives(1);
-					if ( i == gDisplayed )
-						sound->PlaySound(gNewLife, 5);
-				}
-				lastLife[i] += NEW_LIFE;
-			}
 		}
 	}
 
@@ -1439,7 +1474,8 @@ GamePanelDelegate::BonusCountdown()
 			SDL_snprintf(numbuf, sizeof(numbuf), "%-5.1d", TheShip->GetScore());
 			score->SetText(numbuf);
 		}
-		DrawStatus(false);
+		CheckNewLife(false);
+		DrawStatus();
 		DelaySound();
 		return;
 	}
@@ -1585,6 +1621,7 @@ GamePanelDelegate::StartNextWave()
 
 	/* -- Initialize some variables */
 	gLastDrawn = 0L;
+	gLastTicked = 0L;
 	gBoomDelay = (60/FRAME_DELAY);
 	gNextBoom = gBoomDelay;
 	gBoomPhase = 0;
@@ -1597,7 +1634,8 @@ GamePanelDelegate::StartNextWave()
 		}
 		gPlayers[i]->NewWave();
 	}
-	DrawStatus(true);
+	CheckNewLife(true);
+	DrawStatus();
 
 	/* -- Create some asteroids */
 	for (i = 0; i < NewRoids; i++) {
@@ -1655,10 +1693,47 @@ GamePanelDelegate::GameOver()
 /* ----------------------------------------------------------------- */
 /* -- Convert from sprite coordinates to render coordinates */
 
+static void GetRenderCoordinatesF(float &x, float &y)
+{
+	x = gScrnRect.x + ((x * gScrnRect.w) / (GAME_WIDTH << SPRITE_PRECISION));
+	y = gScrnRect.y + ((y * gScrnRect.h) / (GAME_HEIGHT << SPRITE_PRECISION));
+}
+
 void GetRenderCoordinates(int &x, int &y)
 {
-	x = gScrnRect.x + (int)(((float)x * gScrnRect.w) / (GAME_WIDTH << SPRITE_PRECISION));
-	y = gScrnRect.y + (int)(((float)y * gScrnRect.h) / (GAME_HEIGHT << SPRITE_PRECISION));
+	float X = (float)x;
+	float Y = (float)y;
+
+	GetRenderCoordinatesF(X, Y);
+	x = (int)X;
+	y = (int)Y;
+}
+
+/* ----------------------------------------------------------------- */
+/* -- Interpolate between simulation steps for rendering, handling
+      wrap around the edges of the playground.  prev and cur must be
+      within one wrap of [0, range], as maintained by Object::SetPos
+      and the shot movement code */
+
+int InterpolateCoordinate(int prev, int cur, int range)
+{
+	int delta, pos;
+
+	if ( !gSimMoved || !gInterpolateMotion )
+		return(cur);
+
+	delta = cur - prev;
+	if ( delta > range/2 )
+		delta -= range;
+	else if ( delta < -range/2 )
+		delta += range;
+
+	pos = prev + (int)(gRenderAlpha * delta);
+	if ( pos < 0 )
+		pos += range;
+	else if ( pos >= range )
+		pos -= range;
+	return(pos);
 }
 
 /* ----------------------------------------------------------------- */
@@ -1666,40 +1741,44 @@ void GetRenderCoordinates(int &x, int &y)
 
 void RenderSprite(UITexture *sprite, int x, int y, int w, int h)
 {
-	GetRenderCoordinates(x, y);
-	w = (int)(((float)w * gScrnRect.w) / GAME_WIDTH);
-	h = (int)(((float)h * gScrnRect.h) / GAME_HEIGHT);
-	screen->QueueBlit(sprite->Texture(), x, y, w, h, DOCLIP);
+	float X = (float)x;
+	float Y = (float)y;
+	float W, H;
+
+	GetRenderCoordinatesF(X, Y);
+	W = ((float)w * gScrnRect.w) / GAME_WIDTH;
+	H = ((float)h * gScrnRect.h) / GAME_HEIGHT;
+	screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP);
 
 	// Render the other sides of the sprite
-	if (x < 0) {
-		x += GAME_WIDTH;
-		screen->QueueBlit(sprite->Texture(), x, y, w, h, DOCLIP);
-	} else if ((x + w) > GAME_WIDTH) {
-		x -= GAME_WIDTH;
-		screen->QueueBlit(sprite->Texture(), x, y, w, h, DOCLIP);
+	if (X < 0.0f) {
+		X += GAME_WIDTH;
+		screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP);
+	} else if ((X + W) > GAME_WIDTH) {
+		X -= GAME_WIDTH;
+		screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP);
 	}
-	if (y < 0) {
-		y += GAME_HEIGHT;
-		screen->QueueBlit(sprite->Texture(), x, y, w, h, DOCLIP);
+	if (Y < 0.0f) {
+		Y += GAME_HEIGHT;
+		screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP);
 
-		if (x < 0) {
-			x += GAME_WIDTH;
-			screen->QueueBlit(sprite->Texture(), x, y, w, h, DOCLIP);
-		} else if ((x + w) > GAME_WIDTH) {
-			x -= GAME_WIDTH;
-			screen->QueueBlit(sprite->Texture(), x, y, w, h, DOCLIP);
+		if (X < 0.0f) {
+			X += GAME_WIDTH;
+			screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP);
+		} else if ((X + W) > GAME_WIDTH) {
+			X -= GAME_WIDTH;
+			screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP);
 		}
-	} else if ((y + h) > GAME_HEIGHT) {
-		y -= GAME_HEIGHT;
-		screen->QueueBlit(sprite->Texture(), x, y, w, h, DOCLIP);
+	} else if ((Y + H) > GAME_HEIGHT) {
+		Y -= GAME_HEIGHT;
+		screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP);
 
-		if (x < 0) {
-			x += GAME_WIDTH;
-			screen->QueueBlit(sprite->Texture(), x, y, w, h, DOCLIP);
-		} else if ((x + w) > GAME_WIDTH) {
-			x -= GAME_WIDTH;
-			screen->QueueBlit(sprite->Texture(), x, y, w, h, DOCLIP);
+		if (X < 0.0f) {
+			X += GAME_WIDTH;
+			screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP);
+		} else if ((X + W) > GAME_WIDTH) {
+			X -= GAME_WIDTH;
+			screen->QueueBlit(sprite->Texture(), X, Y, W, H, DOCLIP);
 		}
 	}
 }

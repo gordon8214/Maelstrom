@@ -54,6 +54,7 @@ Player:: Player(int index) : Object(0, 0, 0, 0, gPlayerShip[index], NO_PHASE_CHA
 	Valid = 0;
 	Index = index;
 	Score = 0;
+	CameraX = CameraY = PrevCameraX = PrevCameraY = 0;
 	for ( i=0; i<MAX_SHOTS; ++i ) {
 		shots[i] = new Shot;
 		shots[i]->damage = 1;
@@ -170,6 +171,8 @@ Player::NewWave(void)
 	ShotsThisWave = 0;
 	ShotsMissedThisWave = 0;
 	UpdateCamera();
+	PrevCameraX = CameraX;
+	PrevCameraY = CameraY;
 
 	NoShieldsThisLevel = (ShieldLevel == 0);
 }
@@ -219,6 +222,8 @@ Player::NewShip(bool died)
 		}
 	}
 	UpdateCamera();
+	PrevCameraX = CameraX;
+	PrevCameraY = CameraY;
 
 	// We may lose our special abilities
 	if (died) {
@@ -413,6 +418,9 @@ printf("Shots(%d): ", numshots);
 			continue;
 		}
 
+		shots[i]->prevx = shots[i]->x;
+		shots[i]->prevy = shots[i]->y;
+
 		/* Set new X position */
 		shots[i]->x += shots[i]->xvel;
 		if ( shots[i]->x > playground.right )
@@ -533,10 +541,22 @@ printf("\n");
 			}
 		} else
 			WasShielded = 0;
+
+		/* Animate the shield and thrust at simulation speed */
+		if ( AutoShield || (ShieldOn && (ShieldLevel > 0)) )
+			Sphase = !Sphase;
+		if ( Thrusting && ! NoThrust ) {
+			if ( ThrustBlit == gThrust1 )
+				ThrustBlit = gThrust2;
+			else
+				ThrustBlit = gThrust1;
+		}
 	}
 
 	result = Object::Move(Freeze);
 
+	PrevCameraX = CameraX;
+	PrevCameraY = CameraY;
 	UpdateCamera();
 
 	/* Check to see if we are dead... */
@@ -639,7 +659,16 @@ Player::UpdateCamera()
 	}
 }
 
-Uint8 
+void
+Player::GetRenderCameraPos(int *X, int *Y)
+{
+	*X = InterpolateCoordinate(PrevCameraX, CameraX,
+				playground.right - playground.left);
+	*Y = InterpolateCoordinate(PrevCameraY, CameraY,
+				playground.bottom - playground.top);
+}
+
+Uint8
 Player::EncodeInput(unsigned char which, bool enabled)
 {
 	Uint8 value = 0;
@@ -744,33 +773,35 @@ Player::HandleKeys(void)
 	}
 }
 
-void 
+void
 Player::BlitSprite(void)
 {
-	int i;
+	int i, X, Y;
 
 	if ( ! Alive() )
 		return;
 
 	/* Draw the new shots */
 	OBJ_LOOP(i, numshots) {
-		RenderSprite(gPlayerShot, shots[i]->x, shots[i]->y, SHOT_SIZE, SHOT_SIZE);
+		X = InterpolateCoordinate(shots[i]->prevx, shots[i]->x,
+					playground.right - playground.left);
+		Y = InterpolateCoordinate(shots[i]->prevy, shots[i]->y,
+					playground.bottom - playground.top);
+		RenderSprite(gPlayerShot, X, Y, SHOT_SIZE, SHOT_SIZE);
 	}
+
+	GetRenderPos(&X, &Y);
+
 	/* Draw the shield, if necessary */
 	if ( ! gPaused && (AutoShield || (ShieldOn && (ShieldLevel > 0))) ) {
-		RenderSprite(gShieldBlit->sprite[Sphase], x, y, SHIELD_SIZE, SHIELD_SIZE);
-		Sphase = !Sphase;
+		RenderSprite(gShieldBlit->sprite[Sphase], X, Y, SHIELD_SIZE, SHIELD_SIZE);
 	}
 	/* Draw the thrust, if necessary */
 	if ( ! gPaused && Thrusting && ! NoThrust ) {
 		int thrust_x, thrust_y;
-		thrust_x = x + gThrustOrigins[phase].h;
-		thrust_y = y + gThrustOrigins[phase].v;
+		thrust_x = X + gThrustOrigins[phase].h;
+		thrust_y = Y + gThrustOrigins[phase].v;
 		RenderSprite(ThrustBlit->sprite[phase], thrust_x, thrust_y, THRUST_SIZE, THRUST_SIZE);
-		if ( ThrustBlit == gThrust1 )
-			ThrustBlit = gThrust2;
-		else
-			ThrustBlit = gThrust1;
 	}
 
 	/* Draw our ship */
@@ -863,6 +894,7 @@ Player::SetSpawnPosition()
 		(((GAME_WIDTH/2-((gGameInfo.GetNumPlayers()/2-index)*(2*SPRITES_WIDTH)))+offset-SPRITES_WIDTH/2)*SCALE_FACTOR),
 		(((GAME_HEIGHT/2)-SPRITES_WIDTH/2)*SCALE_FACTOR) - SPRITES_WIDTH
 	);
+	SyncRenderPos();
 }
 
 /* Private functions... */
@@ -910,6 +942,8 @@ Player::MakeShot(int offset)
 	shots[numshots]->x -= xvec;
 	shots[numshots]->yvel += yvec;
 	shots[numshots]->y -= yvec;
+	shots[numshots]->prevx = shots[numshots]->x;
+	shots[numshots]->prevy = shots[numshots]->y;
 
 	/* -- Setup the hit rectangle */
 	offset = (shots[numshots]->y>>SPRITE_PRECISION);

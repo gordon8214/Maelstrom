@@ -60,6 +60,27 @@ Bool	gUpdateBuffer = false;
 Bool	gDelaySound = false;
 int		gDelayTicks = 0;
 Bool	gRunning = true;
+float	gRenderAlpha = 0.0f;
+Bool	gSimMoved = false;
+int		gRenderDelayMS = RENDER_DELAY_MS;
+
+/* Render at the refresh rate of the display showing the window */
+static void UpdateRenderRate(void)
+{
+	const SDL_DisplayMode *mode;
+	int delay = RENDER_DELAY_MS;
+
+	if (screen && screen->GetWindow()) {
+		mode = SDL_GetCurrentDisplayMode(SDL_GetDisplayForWindow(screen->GetWindow()));
+		if (mode && mode->refresh_rate > 0.0f) {
+			delay = (int)SDL_lroundf(1000.0f / mode->refresh_rate);
+			if (delay < 4) {
+				delay = 4;
+			}
+		}
+	}
+	gRenderDelayMS = delay;
+}
 
 
 // Main Menu actions:
@@ -223,6 +244,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 		return SDL_APP_FAILURE;
 	}
 
+	UpdateRenderRate();
+
 	return SDL_APP_CONTINUE;
 }
 
@@ -241,6 +264,11 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 		return SDL_APP_SUCCESS;
 	}
 
+	if (event->type == SDL_EVENT_WINDOW_DISPLAY_CHANGED ||
+	    event->type == SDL_EVENT_DISPLAY_CURRENT_MODE_CHANGED) {
+		UpdateRenderRate();
+	}
+
 	screen->ProcessEvent(event);
 
 	HandleEvent(event);
@@ -254,6 +282,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
 		if (gDelaySound) {
 			if (sound->Playing()) {
+				gSimMoved = false;
 				ui->Draw(false);
 				Delay(2);
 				break;
@@ -263,6 +292,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
 		if (gDelayTicks) {
 			int ticks = SDL_min(gDelayTicks, 2);
+			gSimMoved = false;
 			ui->Draw(false);
 			Delay(ticks);
 			gDelayTicks -= ticks;
@@ -279,7 +309,26 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 			}
 		}
 
-		ui->Draw();
+		Uint64 now = SDL_GetTicks();
+		Uint64 tickDelay = FRAME_DELAY_MS;
+		if (gGameInfo.turbo) {
+			// Turbo is 2x as fast
+			tickDelay /= 2;
+		}
+		if (!gInterpolateMotion || (now - gLastTicked) >= tickDelay) {
+			/* Run a simulation frame and draw it */
+			gLastTicked = now;
+			gRenderAlpha = 0.0f;
+			gSimMoved = false;
+			ui->Draw();
+		} else {
+			/* Draw an interpolated frame between simulation steps */
+			gRenderAlpha = (float)(now - gLastTicked) / (float)tickDelay;
+			if (gRenderAlpha > 1.0f) {
+				gRenderAlpha = 1.0f;
+			}
+			ui->Draw(false);
+		}
 
 		if (!gGameOn) {
 			// If we got a replay event, start it up!
@@ -587,17 +636,37 @@ MainPanelDelegate::OnActionRunReplay(int index)
 	}
 }
 
+void
+OptionsDialogDelegate::OnHide()
+{
+	/* The dialog saved its data bindings to the preferences when it
+	   was hidden; refresh the cached values so they take effect now */
+	gInterpolateMotion.Bind(prefs);
+}
+
 
 void DelayFrame(void)
 {
-	Uint64 ticks, delay = FRAME_DELAY_MS;
+	Uint64 ticks, nextTick, nextFrame, deadline;
+	Uint64 tickDelay = FRAME_DELAY_MS;
 
 	if (gGameInfo.turbo) {
 		// Turbo is 2x as fast
-		delay /= 2;
+		tickDelay /= 2;
 	}
 
-	while (((ticks=SDL_GetTicks())-gLastDrawn) < delay) {
+	/* Wait for the next simulation step or rendered frame,
+	   whichever comes first */
+	nextTick = gLastTicked + tickDelay;
+	nextFrame = gLastDrawn + (gInterpolateMotion ? gRenderDelayMS : tickDelay);
+	if (nextFrame < nextTick && (nextTick - nextFrame) < (Uint64)gRenderDelayMS/2) {
+		/* Don't render a frame that would be immediately
+		   followed by a simulation step */
+		nextFrame = nextTick;
+	}
+	deadline = SDL_min(nextTick, nextFrame);
+
+	while ((ticks=SDL_GetTicks()) < deadline) {
 		ui->Poll();
 		SDL_Delay(1);
 	}

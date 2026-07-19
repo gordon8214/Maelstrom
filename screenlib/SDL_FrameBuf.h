@@ -109,12 +109,12 @@ public:
 	/* Blit and update routines */
 	void QueueBlit(SDL_Texture *src,
 			int srcx, int srcy, int srcw, int srch,
-			int dstx, int dsty, int dstw, int dsth, clipval do_clip, float angle = 0.0f);
-	void QueueBlit(SDL_Texture *src, int x, int y, int w, int h, clipval do_clip, float angle = 0.0f) {
+			float dstx, float dsty, float dstw, float dsth, clipval do_clip, float angle = 0.0f);
+	void QueueBlit(SDL_Texture *src, float x, float y, float w, float h, clipval do_clip, float angle = 0.0f) {
 		QueueBlit(src, 0, 0, src->w, src->h, x, y, w, h, do_clip, angle);
 	}
 	void QueueBlit(SDL_Texture *src, int x, int y, clipval do_clip, float angle = 0.0f) {
-		QueueBlit(src, 0, 0, src->w, src->h, x, y, src->w, src->h, do_clip, angle);
+		QueueBlit(src, 0, 0, src->w, src->h, (float)x, (float)y, (float)src->w, (float)src->h, do_clip, angle);
 	}
 	void StretchBlit(const SDL_Rect *dstrect, SDL_Texture *src, const SDL_Rect *srcrect);
 

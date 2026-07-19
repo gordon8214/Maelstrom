@@ -38,6 +38,7 @@ public:
 
 	virtual void OnShow();
 	virtual void OnHide();
+	virtual void OnTick();
 	virtual void OnDraw(DRAWLEVEL drawLevel);
 
 protected:

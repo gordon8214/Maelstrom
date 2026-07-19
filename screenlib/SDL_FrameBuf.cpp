@@ -500,7 +500,7 @@ FrameBuf::DisableTextInput()
 void
 FrameBuf::QueueBlit(SDL_Texture *src,
 			int srcx, int srcy, int srcw, int srch,
-			int dstx, int dsty, int dstw, int dsth, clipval do_clip,
+			float dstx, float dsty, float dstw, float dsth, clipval do_clip,
 			float angle)
 {
 	SDL_FRect srcrect;
@@ -510,15 +510,20 @@ FrameBuf::QueueBlit(SDL_Texture *src,
 	srcrect.y = (float)srcy;
 	srcrect.w = (float)srcw;
 	srcrect.h = (float)srch;
-	dstrect.x = (float)dstx;
-	dstrect.y = (float)dsty;
-	dstrect.w = (float)dstw;
-	dstrect.h = (float)dsth;
+	dstrect.x = dstx;
+	dstrect.y = dsty;
+	dstrect.w = dstw;
+	dstrect.h = dsth;
 	if (do_clip == DOCLIP) {
+		if (dstrect.w <= 0.0f || dstrect.h <= 0.0f) {
+			return;
+		}
+
 		float scaleX = srcrect.w / dstrect.w;
 		float scaleY = srcrect.h / dstrect.h;
 
-		if (!SDL_GetRectIntersectionFloat(&m_clip, &dstrect, &dstrect)) {
+		if (!SDL_GetRectIntersectionFloat(&m_clip, &dstrect, &dstrect) ||
+		    dstrect.w == 0.0f || dstrect.h == 0.0f) {
 			return;
 		}
 

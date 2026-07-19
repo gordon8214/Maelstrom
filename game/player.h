@@ -172,10 +172,14 @@ public:
 
 	void SetSpawnPosition();
 
+	/* Simulation-state camera; use GetRenderCameraPos() when drawing */
 	void GetCameraPos(int *X, int *Y) {
 		*X = CameraX;
 		*Y = CameraY;
 	}
+
+	/* Get the camera position, interpolated between timesteps */
+	void GetRenderCameraPos(int *X, int *Y);
 
 	void HandleDeath();
 
@@ -221,6 +225,8 @@ private:
 
 	int CameraX;
 	int CameraY;
+	int PrevCameraX;
+	int PrevCameraY;
 
 	void UpdateCamera();
 

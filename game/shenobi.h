@@ -99,6 +99,9 @@ public:
 				continue;
 			}
 
+			shots[i]->prevx = shots[i]->x;
+			shots[i]->prevy = shots[i]->y;
+
 			/* Set new X position */
 			shots[i]->x += shots[i]->xvel;
 			if ( shots[i]->x > playground.right )
@@ -200,9 +203,13 @@ public:
 	}
 	virtual void BlitSprite(void) {
 		/* Draw the new shots */
-		int i;
+		int i, X, Y;
 		OBJ_LOOP(i, numshots) {
-			RenderSprite(gEnemyShot, shots[i]->x, shots[i]->y, SHOT_SIZE, SHOT_SIZE);
+			X = InterpolateCoordinate(shots[i]->prevx, shots[i]->x,
+						playground.right - playground.left);
+			Y = InterpolateCoordinate(shots[i]->prevy, shots[i]->y,
+						playground.bottom - playground.top);
+			RenderSprite(gEnemyShot, X, Y, SHOT_SIZE, SHOT_SIZE);
 		}
 		Object::BlitSprite();
 	}
@@ -249,6 +256,8 @@ private:
 		shots[numshots]->x -= xvec;
 		shots[numshots]->yvel += yvec;
 		shots[numshots]->y -= yvec;
+		shots[numshots]->prevx = shots[numshots]->x;
+		shots[numshots]->prevy = shots[numshots]->y;
 
 		/* -- Setup the hit rectangle */
 		offset = (shots[numshots]->y>>SPRITE_PRECISION);

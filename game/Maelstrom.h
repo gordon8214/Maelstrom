@@ -36,6 +36,10 @@
 #define FRAME_DELAY		2
 #define FRAME_DELAY_MS		((FRAME_DELAY*1000)/60)
 
+/* Default time in milliseconds between rendered frames, used when the
+   display refresh rate is unknown (motion is interpolated) */
+#define RENDER_DELAY_MS		(1000/60)
+
 #define DEFAULT_START_WAVE	1
 #define DEFAULT_START_LIVES	3
 #define DEFAULT_START_TURBO	0
@@ -140,6 +144,8 @@ typedef struct {
 	int damage;
 	int x;
 	int y;
+	int prevx;
+	int prevy;
 	int xvel;
 	int yvel;
 	int ttl;

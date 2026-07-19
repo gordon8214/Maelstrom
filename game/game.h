@@ -55,7 +55,8 @@ protected:
 	void ToggleZoomGame();
 	void StartZoomedDrawing();
 	void StopZoomedDrawing();
-	void DrawStatus(Bool first);
+	void CheckNewLife(Bool first);
+	void DrawStatus();
 	bool UpdateGameState();
 	void DoHousekeeping();
 	void DoBonus();
@@ -133,6 +134,7 @@ protected:
 extern void NewGame(void);
 extern void ContinueGame(void);
 extern void GetRenderCoordinates(int &x, int &y);
+extern int  InterpolateCoordinate(int prev, int cur, int range);
 extern void RenderSprite(UITexture *sprite, int x, int y, int w, int h);
 
 #endif // _game_h

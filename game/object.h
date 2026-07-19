@@ -262,6 +262,9 @@ public:
 	/* This function returns 0, or -1 if the sprite died */
 	virtual int Move(int Frozen);
 
+	/* Get the position to draw at, interpolated between timesteps */
+	void GetRenderPos(int *X, int *Y);
+
 	UITexture *GetSprite() {
 		return myblit->sprite[phase];
 	}
@@ -286,6 +289,7 @@ public:
 protected:
 	int Points;
 	int x, y;
+	int prevx, prevy;
 	int xvec, yvec;
 	int xsize, ysize;
 	int solid;
@@ -300,6 +304,13 @@ protected:
 	Rect HitRect;
 	Rect playground;
 	int Exploding;
+
+	/* Match the render position to the current position, so we don't
+	   interpolate across spawns and teleports */
+	void SyncRenderPos(void) {
+		prevx = x;
+		prevy = y;
+	}
 
 	/* See if two rectangles overlap */
 	int Overlap(Rect *R1, Rect *R2) {

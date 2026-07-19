@@ -1,5 +1,5 @@
-<Dialog>
-	<Size w="496" h="320"/>
+<Dialog delegate="OptionsDialog">
+	<Size w="496" h="348"/>
 	<Elements>
 		<DialogLabel name="title" text="Options">
 			<Anchor anchorFrom="TOP" anchorTo="TOP" y="14"/>
@@ -13,14 +13,18 @@
 			<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="24" y="74"/>
 		</DialogCheckbox>
 
+		<DialogCheckbox name="interpolate" bindValue="InterpolateMotion" checked="true" text="Smooth motion (render at the display refresh rate)">
+			<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="24" y="102"/>
+		</DialogCheckbox>
+
 		<DialogLabel name="freqLabel" text="Powerup frequency:">
-			<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="24" y="106"/>
+			<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="24" y="134"/>
 		</DialogLabel>
 
 		<DialogRadioGroup name="prizeFreq" bindValue="Gameplay.PrizeFrequency">
 			<Elements>
 				<DialogRadioButton name="p100" text="100%" checked="true" id="100">
-					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="34" y="132"/>
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="34" y="160"/>
 				</DialogRadioButton>
 				<DialogRadioButton name="p200" text="200%" id="200">
 					<Anchor anchorFrom="LEFT" anchorTo="RIGHT" anchor="p100" x="16"/>
@@ -53,28 +57,28 @@
 		</DialogRadioGroup>
 
 		<DialogLabel name="powerupLabel" text="Starting powerup:">
-			<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="24" y="194"/>
+			<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="24" y="222"/>
 		</DialogLabel>
 
 		<DialogRadioGroup name="startPowerup" bindValue="Gameplay.StartPowerup">
 			<Elements>
 				<DialogRadioButton name="pwNone" text="None" checked="true" id="0">
-					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="34" y="220"/>
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="34" y="248"/>
 				</DialogRadioButton>
 				<DialogRadioButton name="pwMachine" text="Machine Guns" id="1">
-					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="190" y="220"/>
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="190" y="248"/>
 				</DialogRadioButton>
 				<DialogRadioButton name="pwBrakes" text="Air Brakes" id="2">
-					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="346" y="220"/>
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="346" y="248"/>
 				</DialogRadioButton>
 				<DialogRadioButton name="pwTriple" text="Triple Fire" id="4">
-					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="34" y="250"/>
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="34" y="278"/>
 				</DialogRadioButton>
 				<DialogRadioButton name="pwLong" text="Long Range" id="8">
-					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="190" y="250"/>
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="190" y="278"/>
 				</DialogRadioButton>
 				<DialogRadioButton name="pwLucky" text="Lucky Irish" id="128">
-					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="346" y="250"/>
+					<Anchor anchorFrom="TOPLEFT" anchorTo="TOPLEFT" x="346" y="278"/>
 				</DialogRadioButton>
 			</Elements>
 		</DialogRadioGroup>

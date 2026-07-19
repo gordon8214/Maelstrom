@@ -99,6 +99,9 @@ extern Bool	gControlBrakes;
 extern Bool	gNetworkAvailable;
 extern Bool	gUpdateBuffer;
 extern Bool	gRunning;
+extern float	gRenderAlpha;
+extern Bool	gSimMoved;
+extern int	gRenderDelayMS;
 
 
 // in init.cpp : 
@@ -155,14 +158,16 @@ extern Controls	controls;
 extern PrefsVariable<int> gSoundLevel;
 extern PrefsVariable<int> gGammaCorrect;
 extern PrefsVariable<int> gZoomGame;
+extern PrefsVariable<bool> gInterpolateMotion;
 // int scores.cpp :
 extern Scores	hScores[NUM_SCORES];
 
 // -- Variables specific to each game 
 // in game.cpp : 
 extern GameInfo gGameInfo;
-// in init.cpp : 
+// in init.cpp :
 extern Uint64	gLastDrawn;
+extern Uint64	gLastTicked;
 extern int	gNumSprites;
 
 // UI panel definitions...

@@ -23,6 +23,7 @@
 #define _main_h
 
 #include "../screenlib/UIPanel.h"
+#include "../screenlib/UIDialog.h"
 
 class UITexture;
 
@@ -54,6 +55,14 @@ protected:
 
 protected:
 	bool m_bQuitting = false;
+};
+
+class OptionsDialogDelegate : public UIDialogDelegate
+{
+public:
+	OptionsDialogDelegate(UIPanel *panel) : UIDialogDelegate(panel) { }
+
+	virtual void OnHide();
 };
 
 #endif // _main_h

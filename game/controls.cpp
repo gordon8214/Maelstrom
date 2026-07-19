@@ -75,6 +75,8 @@ Controls controls;
 PrefsVariable<int> gSoundLevel("SoundLevel", 4);
 PrefsVariable<int> gGammaCorrect("GammaCorrect", 3);
 PrefsVariable<int> gZoomGame("ZoomGame", 0);
+/* The default must match checked= on the checkbox in Data/UI/options.xml */
+PrefsVariable<bool> gInterpolateMotion("InterpolateMotion", true);
 
 
 void LoadControls(void)
@@ -82,6 +84,7 @@ void LoadControls(void)
 	gSoundLevel.Bind(prefs);
 	gGammaCorrect.Bind(prefs);
 	gZoomGame.Bind(prefs);
+	gInterpolateMotion.Bind(prefs);
 	controls.Bind(prefs);
 }
 

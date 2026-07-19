@@ -51,6 +51,7 @@ int	gResolutionIndex;
 char   *gReplayFile = nullptr;
 Uint32	gLastGameID;
 Uint64	gLastDrawn;
+Uint64	gLastTicked;
 int     gNumSprites;
 SDL_Rect gScrnRect;
 int	gStatusLine;
@@ -1290,6 +1291,7 @@ int InitSprites(void)
 	/* Initialize sprite variables */
 	gNumSprites = 0;
 	gLastDrawn = 0L;
+	gLastTicked = 0L;
 
 	/* Initialize player sprites */
 	return(InitPlayerSprites());

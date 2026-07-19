@@ -91,6 +91,15 @@ AboutPanelDelegate::OnHide()
 }
 
 void
+AboutPanelDelegate::OnTick()
+{
+	int i;
+
+	for ( i=0; i<numsprites; ++i )
+		objects[i]->Move(0);
+}
+
+void
 AboutPanelDelegate::OnDraw(DRAWLEVEL drawLevel)
 {
 	int i;
@@ -100,7 +109,6 @@ AboutPanelDelegate::OnDraw(DRAWLEVEL drawLevel)
 	}
 
 	for ( i=0; i<numsprites; ++i ) {
-		objects[i]->Move(0);
 		objects[i]->BlitSprite();
 	}
 }
